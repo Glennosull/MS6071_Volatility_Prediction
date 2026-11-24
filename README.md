@@ -6,7 +6,7 @@ SPY ETF data from 2010–2025 were obtained from Yahoo Finance and used as a pro
 
 ## Aim
 
-The aim of the project is to predict whether volatility over the following five trading days will be unusually high relative to recent historical volatility.
+The aim of the project is to predict whether volatility over the following five trading days will be high relative to recent historical volatility.
 
 ## Predictors
 
@@ -52,8 +52,6 @@ Users can select a trading date and view:
 - XGBoost probability of high volatility
 - Model classifications
 - The actual volatility outcome over the following five trading days
-
-A link to the deployed dashboard will be added here.
 
 ## Files
 
