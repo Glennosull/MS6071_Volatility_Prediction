@@ -114,65 +114,6 @@ vif_model <- glm(
 
 vif(vif_model)
 
-## Data for target plot
-target_plot_data <- vol_model_data %>%
-  filter(
-    Date >= as.Date("2022-01-01"),
-    Date < as.Date("2024-01-01")
-  )
-
-# Plot future volatility and threshold
-ggplot(
-  target_plot_data,
-  aes(x = Date)
-) +
-  geom_line(
-    aes(
-      y = FutureVol5,
-      colour = "Future 5-Day Volatility"
-    ),
-    linewidth = 0.7
-  ) +
-  geom_line(
-    aes(
-      y = VolThreshold,
-      colour = "Rolling Benchmark"
-    ),
-    linewidth = 1
-  ) +
-  scale_colour_manual(
-    values = c(
-      "Future 5-Day Volatility" = "indianred2",
-      "Rolling Benchmark" = "darkblue")
-  ) +
-  scale_y_continuous(
-    labels = scales::percent_format(accuracy = 0.1)
-  ) +
-  labs(
-    title = "When Is Future Volatility Considered High?",
-    subtitle = "Future volatility above the rolling benchmark is classified as HighVol = 1",
-    x = NULL,
-    y = "5-Day Volatility",
-    colour = NULL
-    ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    legend.position = "top",
-    plot.title = element_text(
-      face = "bold",
-      size = 16
-    ),
-    plot.subtitle = element_text(
-      size = 11)
-  )
-
-ggsave(
-  "volatility_target.png",
-  width = 10,
-  height = 6,
-  dpi = 300
-)
-
 ## Walk-forward validation
 validation_years <- 2018:2023
 
@@ -675,65 +616,6 @@ legend(
   lwd = 2)
 
 dev.off()
-
-## XGBoost feature importance
-xgb_importance <- xgb.importance(
-  feature_names = predictors,
-  model = final_xgb)
-
-xgb_importance
-
-importance_plot_data <- xgb_importance %>%
-  select(
-    Feature,
-    Gain
-  ) %>%
-  mutate(
-    Feature = dplyr::recode(
-      Feature,
-      Return = "Today's Return",
-      Volatility20 = "Recent Volatility",
-      RSI14 = "RSI"
-    )
-  ) %>%
-  arrange(Gain)
-
-## Presentation plot - XGBoost feature importance
-ggplot(
-  importance_plot_data,
-  aes(
-    x = Gain,
-    y = reorder(Feature, Gain)
-  )
-) +
-  geom_col(
-    fill = "steelblue",
-    width = 0.65
-  ) +
-  scale_x_continuous(
-    labels = scales::percent_format()
-  ) +
-  labs(
-    title = "What Information Did XGBoost Use Most?",
-    subtitle = "Relative contribution of each predictor to the final model",
-    x = "Feature Importance",
-    y = NULL
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(
-      face = "bold",
-      size = 16
-    ),
-    panel.grid.major.y = element_blank()
-  )
-
-ggsave(
-  "xgboost_feature_importance.png",
-  width = 9,
-  height = 5.5,
-  dpi = 300
-)
 
 #tables
 walk_forward_results
